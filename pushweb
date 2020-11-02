@@ -1,0 +1,14 @@
+#!/bin/bash
+
+AWSHOST="ec2-100-24-253-48.compute-1.amazonaws.com"
+AWSUSER="push-web"
+LOCALDIR="web-content"
+
+
+cd /root/cron-lab
+
+#rsync -e "ssh -i keys/pull-log" -av "${AWSUSER}@${AWSHOST}:" ${LOCALDIR}
+rsync -e "ssh -i keys/push-web" -vraO --no-perms --delete --chmod=660 --chown=push-web:www-data "${LOCALDIR}/" "${AWSUSER}@${AWSHOST}":
+
+logger -t $0 "web content pushed to ${AWSHOST}"
+mail -s "Apache Update" grant.mahoney@mymail.champlain.edu <<< "web content pushed to ${AWSHOST}"
